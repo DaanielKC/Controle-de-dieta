@@ -16,9 +16,11 @@ def initiate_interface():
         print("1. Cadastro de usuário")
         print("2. Cadastro de alimento")
         print("3. Registro de consumo")
-        print("4. Ver resumo diário")
-        print("5. Ver histórico de consumo")
-        print("6. Sair")
+        print("4. Ver resumo do usuário")
+        print("5. Ver resumo diário")
+        print("6. Ver histórico de consumo")
+        print("7. Sair")
+        print()
         choice = input("Digite o número da opção desejada: ")
 
         if choice == '1':
@@ -28,10 +30,12 @@ def initiate_interface():
         elif choice == '3':
             consumption_registration()
         elif choice == '4':
-            daily_summary()  
+            user_summary()
         elif choice == '5':
-            consumption_history()
+            daily_summary()
         elif choice == '6':
+            consumption_history()
+        elif choice == '7':
             print("Obrigado por usar o Controle de Dieta!")
             break
         else:
@@ -51,6 +55,7 @@ def user_registration():
         print("1. Perder peso")
         print("2. Manter o peso")
         print("3. Ganhar peso")
+        print()
         goal_choice = input("Digite o número correspondente ao seu objetivo: ")
         if goal_choice in ['1', '2', '3']:
             valid_goal = True
@@ -65,6 +70,7 @@ def user_registration():
             print()
 
     add_user(user)
+    print()
     print(f"Usuário {user.name} cadastrado com sucesso!")
     print()
     returning = ""
@@ -117,6 +123,40 @@ def consumption_registration():
     add_consumption(consumption)
     print()
     print(f"Consumo registrado: {user.name} consumiu {quantity}g de {food.name}.")
+    print()
+    returning = ""
+    while returning != "1":
+        returning = input("Digite 1 para voltar ao menu principal: ")
+
+def user_summary():
+    clear()
+    print("Usuários:")
+    users = get_users()
+    for i, user in enumerate(users, start=1):
+        print(f"{i}. {user.name}")
+
+    print()
+    user_choice = int(input("Escolha o usuário (número): "))
+    user = users[user_choice - 1]
+
+    if user.goal == "Cutting":
+            goal = "Perda de peso"
+    elif user.goal == "Maintenance":
+            goal = "Manutenção"
+    elif user.goal == "Bulking":
+            goal = "Ganho de massa muscular"
+
+    clear()
+    print(f"Resumo do usuário {user.name}:")
+    print(f"Idade: {user.age} anos")
+    print(f"Peso: {user.weight} kg")
+    print(f"Altura: {user.height} cm")
+    print(f"Sexo: {user.sex}")
+    print(f"Nível de atividade: {user.activity_level}")
+    print(f"Objetivo: {goal}")
+    print(f"Taxa Metabólica Basal (TMB): {user.calculate_tmb():.2f} kcal")
+    print(f"Gasto Energético Total (GET): {user.calculate_get():.2f} kcal")
+    print(f"Meta de calorias: {user.calculate_goal():.2f} kcal")
     print()
     returning = ""
     while returning != "1":
