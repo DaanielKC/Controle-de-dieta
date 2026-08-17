@@ -1,6 +1,8 @@
-from Classes.user import User, CuttingUser, MaintenanceUser, BulkingUser
+from datetime import datetime
+from Classes.user import CuttingUser, MaintenanceUser, BulkingUser
 from Classes.food import Food
 from Classes.consumption import Consumption
+from Database.database import add_user, get_users, add_food, get_foods, add_consumption, get_consumptions
 import os
 
 def clear():
@@ -26,8 +28,7 @@ def initiate_interface():
         elif choice == '3':
             consumption_registration()
         elif choice == '4':
-            daily_summary()
-            
+            daily_summary()  
         elif choice == '5':
             consumption_history()
         elif choice == '6':
@@ -62,7 +63,8 @@ def user_registration():
         else:
             print("Opção inválida.")
             print()
-    
+
+    add_user(user)
     print(f"Usuário {user.name} cadastrado com sucesso!")
     print()
     returning = ""
@@ -79,6 +81,8 @@ def food_registration():
     carbo = float(input("Digite a quantidade de carboidratos (por porção): "))
     fats = float(input("Digite a quantidade de gorduras (por porção): "))
     food = Food(name, quantity, calories, protein, carbo, fats)
+
+    add_food(food)
     print(f"Alimento {food.name} cadastrado com sucesso!")
     print()
     returning = ""
@@ -87,12 +91,32 @@ def food_registration():
 
 def consumption_registration():
     clear()
-    user_name = input("Digite o nome do usuário: ")
-    food_name = input("Digite o nome do alimento consumido: ")
+    print("Usuários:")
+    users = get_users()
+    for i, user in enumerate(users, start=1):
+        print(f"{i}. {user.name}")
+
+    print()
+    user_choice = int(input("Escolha o usuário (número): "))
+    user = users[user_choice - 1]
+
+    print()
+    print("Alimentos:")
+    foods = get_foods()
+    for i, food in enumerate(foods, start=1):
+        print(f"{i}. {food.name}")
+
+    print()
+    food_choice = int(input("Escolha o alimento (número): "))
+    food = foods[food_choice - 1]
+
+    print()
     quantity = float(input("Digite a quantidade consumida (em gramas): "))
     
     consumption = Consumption(user, food, quantity)
-    print(f"Consumo registrado: {user.name} consumiu {quantity}g de {food.name} em {consumption.date}.")
+    add_consumption(consumption)
+    print()
+    print(f"Consumo registrado: {user.name} consumiu {quantity}g de {food.name}.")
     print()
     returning = ""
     while returning != "1":
@@ -100,19 +124,44 @@ def consumption_registration():
 
 def daily_summary():
     clear()
-    user_name = input("Digite o nome do usuário para ver o resumo diário: ")
-    
+    print("Usuários:")
+    users = get_users()
+    for i, user in enumerate(users, start=1):
+        print(f"{i}. {user.name}")
 
-    total_calories = consumption.calculate_total_calories()
-    total_protein = consumption.calculate_total_protein()
-    total_carbo = consumption.calculate_total_carbo()
-    total_fats = consumption.calculate_total_fats()
+    print()
+    user_choice = int(input("Escolha o usuário (número): "))
+    user = users[user_choice - 1]
 
-    print(f"Resumo diário para {user.name} em {consumption.date}:")
-    print(f"Calorias totais: {total_calories} kcal")
-    print(f"Proteínas totais: {total_protein} g")
-    print(f"Carboidratos totais: {total_carbo} g")
-    print(f"Gorduras totais: {total_fats} g")
+    consumptions = get_consumptions()
+    user_consumptions = [c for c in consumptions if (c.user.id == user.id) and (c.date == datetime.now().strftime("%d-%m-%Y"))]
+
+    total_calories = sum(consumption.calculate_total_calories() for consumption in user_consumptions)
+    total_protein = sum(consumption.calculate_total_protein() for consumption in user_consumptions)
+    total_carbo = sum(consumption.calculate_total_carbo() for consumption in user_consumptions)
+    total_fats = sum(consumption.calculate_total_fats() for consumption in user_consumptions)
+
+    if user.goal == "Cutting":
+        goal = "Perda de peso"
+    elif user.goal == "Maintenance":
+        goal = "Manutenção"
+    elif user.goal == "Bulking":
+        goal = "Ganho de massa muscular"
+
+    clear()
+    print(f"RESUMO DIÁRIO:")
+    print(f"Usuário: {user.name}")
+    print(f"Data: {datetime.now().strftime('%d-%m-%Y')}")
+    print(f"Objetivo: {goal}")
+    print()
+    print("Consumo:")
+    print(f"Calorias totais: {total_calories:.2f} kcal")
+    print(f"Proteínas totais: {total_protein:.2f}g")
+    print(f"Carboidratos totais: {total_carbo:.2f}g")
+    print(f"Gorduras totais: {total_fats:.2f}g")
+    print()
+    print(f"Meta de calorias: {user.calculate_goal():.2f} kcal")
+    print(f"Restante: {max(0, user.calculate_goal() - total_calories):.2f} kcal")
     print()
     returning = ""
     while returning != "1":
@@ -120,11 +169,21 @@ def daily_summary():
 
 def consumption_history():
     clear()
-    user_name = input("Digite o nome do usuário para ver o histórico de consumo: ")
-    
+    print("Usuários:")
+    users = get_users()
+    for i, user in enumerate(users, start=1):
+        print(f"{i}. {user.name}")
+
+    print()
+    user_choice = int(input("Escolha o usuário (número): "))
+    user = users[user_choice - 1]
+
+    clear()
     print(f"Histórico de consumo para {user.name}:")
-    
-    pass
+    consumptions = get_consumptions()
+    user_consumptions = [c for c in consumptions if c.user.id == user.id]
+    for consumption in user_consumptions:
+            print(f"- {consumption.date}: {consumption.food.name}, {consumption.quantity}g, {consumption.calculate_total_calories():.2f} kcal")
     print()
     returning = ""
     while returning != "1":

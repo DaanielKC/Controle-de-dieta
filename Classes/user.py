@@ -92,19 +92,29 @@ class User():
         return get
 
 class CuttingUser(User):
+    def __init__(self, name, age, weight, height, sex, activity_level):
+            super().__init__(name, age, weight, height, sex, activity_level)
+            self.goal = "Cutting"
     def calculate_goal(self):
         get = self.calculate_get()
-        goal = get - 300  # Redução de 300 calorias para perda de peso
-        return goal
+        calories_goal = get - 300  # Redução de 300 calorias para perda de peso
+        return calories_goal
 
 class MaintenanceUser(User):
+    def __init__(self, name, age, weight, height, sex, activity_level):
+            super().__init__(name, age, weight, height, sex, activity_level)
+            self.goal = "Maintenance"
     def calculate_goal(self):
         get = self.calculate_get()
-        goal = get  # Mantém o mesmo valor de GET para manutenção de peso
-        return goal
+        calories_goal = get  # Mantém o mesmo valor de GET para manutenção de peso
+        return calories_goal
 
 class BulkingUser(User):
+    def __init__(self, name, age, weight, height, sex, activity_level):
+        super().__init__(name, age, weight, height, sex, activity_level)
+        self.goal = "Bulking"
+
     def calculate_goal(self):
         get = self.calculate_get()
-        goal = get + 300  # Adicão de 300 calorias para ganho de peso
-        return goal
+        calories_goal = get + 300  # Adicão de 300 calorias para ganho de peso
+        return calories_goal

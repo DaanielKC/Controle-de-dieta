@@ -1,13 +1,16 @@
-from datetime import date
+from datetime import datetime
 from Classes.user import User
 from Classes.food import Food
 
 class Consumption():
-    def __init__(self, user, food, quantity):
+    def __init__(self, user, food, quantity, date=None):
         self.user = user
         self.food = food
         self.quantity = quantity
-        self.date = date.today()
+        if date is None:
+            self.date = datetime.now().strftime("%d-%m-%Y")
+        else:
+            self.date = date
 
     @property
     def user(self):

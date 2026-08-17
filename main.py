@@ -1,8 +1,5 @@
+from Database.database import create_tables
 from interface import initiate_interface
 
-def main():
-    initiate_interface()
-
-if __name__ == "__main__":
-    main()
-
+create_tables()
+initiate_interface()
