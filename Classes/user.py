@@ -6,7 +6,9 @@ class User():
         self.height = height
         self.sex = sex
         self.activity_level = activity_level
+        self._goal = None
 
+    # Getters e Setters
     @property
     def name(self):
         return self._name
@@ -68,6 +70,10 @@ class User():
             raise ValueError("Nível de atividade inválido.")
         self._activity_level = value
 
+    @property
+    def goal(self):
+        return self._goal
+
     # Fórmula de Mifflin-St Jeor para calcular a Taxa Metabólica Basal (TMB)
     def calculate_tmb(self):
         if self.sex == 'M':
@@ -91,10 +97,12 @@ class User():
             get = tmb * 1.9
         return get
 
+# Subclasses do User para diferentes objetivos
 class CuttingUser(User):
     def __init__(self, name, age, weight, height, sex, activity_level):
             super().__init__(name, age, weight, height, sex, activity_level)
-            self.goal = "Cutting"
+            self._goal = "Cutting"
+
     def calculate_goal(self):
         get = self.calculate_get()
         calories_goal = get - 300  # Redução de 300 calorias para perda de peso
@@ -103,7 +111,7 @@ class CuttingUser(User):
 class MaintenanceUser(User):
     def __init__(self, name, age, weight, height, sex, activity_level):
             super().__init__(name, age, weight, height, sex, activity_level)
-            self.goal = "Maintenance"
+            self._goal = "Maintenance"
     def calculate_goal(self):
         get = self.calculate_get()
         calories_goal = get  # Mantém o mesmo valor de GET para manutenção de peso
@@ -112,7 +120,7 @@ class MaintenanceUser(User):
 class BulkingUser(User):
     def __init__(self, name, age, weight, height, sex, activity_level):
         super().__init__(name, age, weight, height, sex, activity_level)
-        self.goal = "Bulking"
+        self._goal = "Bulking"
 
     def calculate_goal(self):
         get = self.calculate_get()

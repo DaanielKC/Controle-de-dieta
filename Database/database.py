@@ -1,6 +1,6 @@
 from Classes.consumption import Consumption
 from Classes.user import CuttingUser, MaintenanceUser, BulkingUser
-from Classes.food import Food
+from Classes.food import Drink, Food, SolidFood
 
 import sqlite3
 
@@ -34,7 +34,8 @@ def create_tables():
             calories REAL NOT NULL,
             protein REAL NOT NULL,
             carbo REAL NOT NULL,
-            fats REAL NOT NULL
+            fats REAL NOT NULL,
+            category TEXT NOT NULL
         )
     ''')    
 
@@ -54,6 +55,7 @@ def create_tables():
     connection.commit()
     connection.close()
 
+# Adição de um usuário à tabela
 def add_user(user):
     connection = connect()
     cursor = connection.cursor()
@@ -73,6 +75,7 @@ def add_user(user):
     connection.commit()
     connection.close()
 
+# Função para pegar os dados dos usuários
 def get_users():
     connection = connect()
     cursor = connection.cursor()
@@ -93,24 +96,27 @@ def get_users():
     connection.close()
     return users
 
+# Adição de um alimento
 def add_food(food):
     connection = connect()
     cursor = connection.cursor()
     cursor.execute('''
-        INSERT INTO foods (name, base_quantity, calories, protein, carbo, fats)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO foods (name, base_quantity, calories, protein, carbo, fats, category)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     ''', (
         food.name,
         food.base_quantity,
         food.calories,
         food.protein,
         food.carbo,
-        food.fats
+        food.fats,
+        food.category
     ))
 
     connection.commit()
     connection.close()
 
+# Função para pegar os dados dos alimentos
 def get_foods():
     connection = connect()
     cursor = connection.cursor()
@@ -119,13 +125,17 @@ def get_foods():
 
     foods = []
     for row in rows:
-        food = Food(row[1], row[2], row[3], row[4], row[5], row[6])
+        if row[7] == "Solid":
+            food = SolidFood(row[1], row[2], row[3], row[4], row[5], row[6])
+        else:
+            food = Drink(row[1], row[2], row[3], row[4], row[5], row[6])
         food.id = row[0]  # Atribuindo o ID do banco de dados ao objeto Food
         foods.append(food)
 
     connection.close()
     return foods
 
+# Adição de um consumo
 def add_consumption(consumption):
     connection = connect()
     cursor = connection.cursor()
@@ -142,6 +152,7 @@ def add_consumption(consumption):
     connection.commit()
     connection.close()
 
+# Função para pegar os dados dos consumos
 def get_consumptions():
     connection = connect()
     cursor = connection.cursor()

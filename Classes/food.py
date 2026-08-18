@@ -6,7 +6,9 @@ class Food():
         self.protein = protein
         self.carbo = carbo
         self.fats = fats
+        self._category = None 
 
+    # Getters e Setters
     @property
     def name(self):
         return self._name
@@ -17,6 +19,16 @@ class Food():
             raise ValueError("O nome do alimento não pode ser vazio.")
         self._name = value
 
+    @property
+    def category(self):
+        return self._category
+
+    @category.setter
+    def category(self, value):
+        if not value:
+            raise ValueError("A categoria do alimento não pode ser vazia.")
+        self._category = value
+    
     @property
     def base_quantity(self):
         return self._base_quantity
@@ -66,3 +78,18 @@ class Food():
         if value < 0:
             raise ValueError("A quantidade de gorduras não pode ser negativa.")
         self._fats = value
+
+    @property
+    def category(self):
+        return self._category
+
+# Subclasses do Food para diferentes categorias
+class SolidFood(Food):
+    def __init__(self, name, base_quantity, calories, protein, carbo, fats):
+        super().__init__(name, base_quantity, calories, protein, carbo, fats)
+        self._category = "Solid"
+
+class Drink(Food):
+    def __init__(self, name, base_quantity, calories, protein, carbo, fats):
+        super().__init__(name, base_quantity, calories, protein, carbo, fats)
+        self._category = "Drink"

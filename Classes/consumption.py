@@ -12,6 +12,7 @@ class Consumption():
         else:
             self.date = date
 
+    # Getters e Setters
     @property
     def user(self):
         return self._user
@@ -42,10 +43,12 @@ class Consumption():
             raise ValueError("A quantidade não pode ser nula ou negativa.")
         self._quantity = value
 
+    # Cálculo de calorias do consumo
     def calculate_total_calories(self):
         total_calories = (self.food.calories * self.quantity) / self.food.base_quantity
         return total_calories
 
+    # Cálculos dos macronutrientes consumidos
     def calculate_total_protein(self):
         total_protein = (self.food.protein * self.quantity) / self.food.base_quantity
         return total_protein
