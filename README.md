@@ -22,3 +22,5 @@ Desenvolver um software orientado a objetos para controle de dieta, permitindo q
 - Persistência de Dados: Utilização de arquivos JSON ou SQLite para armazenar registros.
 - Interface Simples: Pode ser via terminal ou uma interface gráfica opcional com Tkinter ou PyQt.
 - Código bem estruturado e comentado.
+
+Para rodar o sistema, basta executar o arquivo main.py no terminal
